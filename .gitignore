@@ -1,0 +1,14 @@
+# Allow dotfiles
+!.*
+
+# Ignore specific files you don’t want to track
+.swp
+.swo
+.history
+.cache
+.Trash
+.DS_Store
+.npm/
+.node_modules/
+.idea/
+.vscode/

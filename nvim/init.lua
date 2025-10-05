@@ -21,7 +21,9 @@ vim.api.nvim_set_keymap('n', '<leader>o', ':set nopaste<CR>', { noremap = true, 
 vim.api.nvim_set_keymap('n', '<leader>e', ':lua vim.diagnostic.open_float()<CR>', { noremap = true, silent = true })
 -- Bring up the Telescope diag window
 vim.api.nvim_set_keymap('n', '<leader>E', ':Telescope diagnostics<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>R', ':LspRestart<CR>', { noremap = true, silent = true })
 
+vim.keymap.set('n', '<leader>q', ":NvimTreeToggle<CR>", { silent = true})
 ---- END Keymaps -----
 ---- This is a crude export of vimrc to init.lua ----
 -- Enable syntax highlighting
@@ -80,34 +82,29 @@ require("lazy").setup({
   { "nvim-tree/nvim-tree.lua" },
 
   -- Fuzzy Finder
-  { "nvim-telescope/telescope.nvim", dependencies = { "nvim-telescope/telescope-fzf-native.nvim", build = "make" } },
+ -- { "nvim-telescope/telescope.nvim", dependencies = { "nvim-telescope/telescope-fzf-native.nvim", build = "make" } },
 
   -- Syntax Highlighting
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 
   -- LSP and Completion
-  { "neovim/nvim-lspconfig" },
-  { "hrsh7th/nvim-cmp" },
-  { "hrsh7th/cmp-nvim-lsp" },
-  { "L3MON4D3/LuaSnip" }, -- Snippet engine
+ -- { "neovim/nvim-lspconfig" },
+ -- { "hrsh7th/nvim-cmp" },
+ -- { "hrsh7th/cmp-nvim-lsp" },
+ -- { "L3MON4D3/LuaSnip" }, -- Snippet engine
 
   -- Git Integration
-  { "lewis6991/gitsigns.nvim" },
+ -- { "lewis6991/gitsigns.nvim" },
 
   -- Status Line
     { "nvim-lualine/lualine.nvim" },
-  -- Gruvbox Install
-	{ "ellisonleao/gruvbox.nvim", priority = 1000 , config = true }
 --
 --  -- Autopairs
 --  { "windwp/nvim-autopairs" },
 --
---  -- Commenting
---  { "numToStr/Comment.nvim" },
+	 -- Commenting
+     { "numToStr/Comment.nvim" },
 --
---  -- Debugging
---  { "mfussenegger/nvim-dap" },
---  { "rcarriga/nvim-dap-ui" },
 })
 
 -- General settings
@@ -115,36 +112,39 @@ vim.o.completeopt = "menu,menuone,noselect"
 
 
 -- LSP Configuration
-local lspconfig = require("lspconfig")
-lspconfig.clangd.setup({})
+--local lspconfig = require("lspconfig")
+--lspconfig.clangd.setup({})
+
+-- Tree
+require("nvim-tree").setup{}
 
 -- Treesitter Configuration
 require("nvim-treesitter.configs").setup({
-  ensure_installed = { "c", "cpp" }, -- Install parsers for C/C++
+  ensure_installed = { "c", "cpp", "cuda", "python" }, -- Install parsers for C/C++, python
   highlight = { enable = true },
 })
 
 -- Completion Configuration
-local cmp = require("cmp")
-cmp.setup({
-  mapping = {
-    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-    ["<C-f>"] = cmp.mapping.scroll_docs(4),
-	['<Tab>'] = cmp.mapping.select_next_item(),    -- Next item
-	['<S-Tab>'] = cmp.mapping.select_prev_item(),  -- Previous item
-    ["<C-Space>"] = cmp.mapping.complete(),
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-  },
-  sources = { { name = "nvim_lsp" }, { name = "buffer" } },
-})
+--local cmp = require("cmp")
+--cmp.setup({
+--  mapping = {
+--    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+--    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+--	['<Tab>'] = cmp.mapping.select_next_item(),    -- Next item
+--	['<S-Tab>'] = cmp.mapping.select_prev_item(),  -- Previous item
+--    ["<C-Space>"] = cmp.mapping.complete(),
+--    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+--  },
+--  sources = { { name = "nvim_lsp" }, { name = "buffer" } },
+--})
 
 -- Git Signs
- require("gitsigns").setup()
+-- require("gitsigns").setup()
 
 -- Status Line
 require('lualine').setup({
 	options = {
-		theme = 'gruvbox', -- Use a theme that adapts to the background
+		theme = 'gruvbox-material',
 		globalstatus = true, -- Make the status line span the entire width (Neovim 0.7+)
 	},
 })
@@ -153,21 +153,8 @@ require('lualine').setup({
 --require("nvim-autopairs").setup()
 
 -- Commenting
---require("Comment").setup()
+require("Comment").setup()
 
--- Gruvbox
-require("gruvbox").setup({
-	overrides={
-	}
-})
 --- END PLUGINS ----
--- Restart LSP on write for only C and C++ files
-vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = { "*.c", "*.cpp" }, -- Add file patterns here
-  callback = function()
-    vim.cmd("LspRestart")
-  end,
-})
-
-vim.cmd([[colorscheme gruvbox]])
+vim.cmd([[colorscheme slate]])
 vim.opt.guicursor = ""
